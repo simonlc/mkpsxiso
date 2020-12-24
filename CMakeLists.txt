@@ -4,6 +4,8 @@ include(FindPkgConfig)
 #set global exe name
 set(MAIN "mkpsxiso")
 
+set(CMAKE_CXX_STANDARD 11)
+
 project(${MAIN})
 #include directory, same for all build types
 include_directories(src)
@@ -24,7 +26,8 @@ elseif(MSYS OR MSVC)
   message(FATAL_ERROR "CAN NOT BUILD ON MICROSOFT COMPILER")
   
 elseif(APPLE OR WATCOM OR BORLAND)
-  message(FATAL_ERROR "CAN NOT BUILD FOR APPLE, WATCOM, BORLAND")
+  message(STATUS "Try to build for apple")
+  set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin_darwin)
   
 elseif(UNIX)
   message(STATUS "UNIX BUILD")
@@ -38,4 +41,11 @@ endif()
 
 add_executable(${MAIN} ${SOURCES})
 
-target_link_libraries(${MAIN} ${TINYXML_LIBRARIES})
+# target_link_libraries(${MAIN} ${TINYXML_LIBRARIES})
+target_compile_options(${MAIN} PRIVATE "${TINYXML_CFLAGS}")
+target_compile_options(${MAIN} PRIVATE "${TINYXML_CFLAGS_OTHER}")
+target_include_directories(${MAIN} SYSTEM PRIVATE "${TINYXML_INCLUDE_DIRS}")
+target_link_directories(${MAIN} PRIVATE "${TINYXML_LIBRARY_DIRS}")
+target_link_libraries(${MAIN} PRIVATE "${TINYXML_LIBRARIES}")
+target_link_options(${MAIN} PRIVATE "${TINYXML_LDFLAGS}")
+target_link_options(${MAIN} PRIVATE "${TINYXML_LDFLAGS_OTHER}")
